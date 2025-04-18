@@ -43,12 +43,24 @@ def convert_csv_to_db(csv_filepath, db_filepath):
     cursor = conn.cursor()
     table_name = os.path.splitext(os.path.basename(csv_filepath))[0]
     
+    # Sanitize table name to avoid SQL injection or invalid characters
+    table_name = table_name.replace(" ", "_").replace("-", "_")
+    
     with open(csv_filepath, 'r') as file:
         csv_reader = csv.reader(file)
         headers = next(csv_reader)
-        cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
-        cursor.execute(f"CREATE TABLE {table_name} ({', '.join(headers)})")
         
+        # Sanitize headers and assign TEXT type
+        sanitized_headers = [f'"{header.replace(" ", "_").replace("-", "_")}" TEXT' for header in headers]
+        columns = ", ".join(sanitized_headers)
+        
+        # Drop table if it exists
+        cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+        
+        # Create table with sanitized headers and TEXT type
+        cursor.execute(f"CREATE TABLE {table_name} ({columns})")
+        
+        # Insert rows
         for row in csv_reader:
             cursor.execute(f"INSERT INTO {table_name} VALUES ({', '.join(['?']*len(row))})", row)
     
