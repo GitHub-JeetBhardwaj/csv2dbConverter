@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download SQLite File</title>
+    <style>
+        body {
+            background-image: url("/static/img1.jpg");
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            text-align: center;
+            background-color: #1e1e1e;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            margin-bottom: 1.5rem;
+            color: #ff4444;
+        }
+        a {
+            background-color: #ff4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        a:hover {
+            background-color: #cc0000;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            background-color: #333;
+            color: #fff;
+        }
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid #ff4444;
+        }
+        th {
+            background-color: #ff4444;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #444;
+        }
+        .separator {
+            text-align: center;
+            font-weight: bold;
+            color: #ff4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your SQLite file is ready!</h1>
+        <a href="{{ url_for('download_db') }}">Download SQLite File</a>
+
+        <h2>Database Content: {{ table_name }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    {% for header in db_content[0] %}
+                        <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in db_content %}
+                    {% if row[0] == '----' %}
+                        <tr class="separator">
+                            <td colspan="{{ row|length }}">----</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            {% for cell in row %}
+                                <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
